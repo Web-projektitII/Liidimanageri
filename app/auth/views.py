@@ -6,6 +6,8 @@ from .. import db
 from ..models import User, Liidi
 from ..email import send_email
 from .forms import LoginForm, RegistrationForm, LiidiForm
+from flask_cors import cross_origin
+
 
 @auth.before_app_request
 def before_request():
@@ -35,7 +37,7 @@ def login():
             if next is None or not next.startswith('/'):
                 next = url_for('main.index')
             return redirect(next)
-        flash('Invalid email or password.')
+        flash('Invalid email or password.')   
     return render_template('auth/login.html', form=form)
 
 @auth.route('/liidit', methods=['GET', 'POST'])
@@ -104,6 +106,63 @@ def register():
         flash('A confirmation email has been sent to you by email.')
         return redirect(url_for('auth.login'))
     return render_template('auth/register.html', form=form)
+
+@auth.route('/signin', methods=['GET', 'POST'])
+@cross_origin(supports_credentials=True)
+def signin():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data.lower()).first()
+        if user is not None and user.verify_password(form.password.data):
+            login_user(user, form.remember_me.data)
+            # next = request.args.get('next')
+            # if next is None or not next.startswith('/'):
+            #    next = url_for('main.index')
+            return "OK"
+        else:
+            return "Kirjautuminen ei onnistunut."
+    else:
+        print("validointivirheet:"+str(form.errors))
+        return "Virhe lomakkeessa"
+  
+@auth.route('/signup', methods=['GET', 'POST'])
+@cross_origin(supports_credentials=True)
+def signup():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(email=form.email.data.lower(),
+                    username=form.username.data,
+                    password=form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        token = user.generate_confirmation_token()
+        send_email(user.email, 'Confirm Your Account',
+                   'auth/email/confirm', user=user, token=token)
+        # flash('A confirmation email has been sent to you by email.')
+        return "OK"
+    else:
+        # print("validointivirheet:"+str(form.errors))
+        return "Virhe lomakkeessa"
+
+@auth.route('/testi', methods=['GET', 'POST'])
+@cross_origin(supports_credentials=True)
+def testi():
+    form = RegistrationForm()
+    user = User(email=username,
+                username=username,
+                password=password,
+                role_id='',
+                confirmed='1'
+                )
+    try:
+        db.session.add(user)
+        db.session.commit()
+    except Exception as ex:
+        ex_name = ex.__class__.__name__
+        if ex_name == 'IntegrityError':
+            db.session.rollback()
+        return "db:"+ex_name
+    return "OK"
 
 
 @auth.route('/confirm/<token>')

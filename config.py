@@ -20,36 +20,41 @@ class Config:
     FLASKY_MAIL_SENDER = 'Flasky Admin <liidimanageri@example.com>'
     FLASKY_ADMIN = os.environ.get('FLASKY_ADMIN')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
+    ENV = os.environ.get('ENV')
+    if ENV == 'prod':
+        DB_USERNAME = os.environ.get('DB_USERNAME_TUOTANTO')
+        DB_PASSWORD = os.environ.get('DB_PASSWORD_TUOTANTO')
+    else:
+        DB_USERNAME = 'root'
+        DB_PASSWORD = ''
     @staticmethod
     def init_app(app):
         pass
-
 
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
 
-
 class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
         'sqlite://'
-
 
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 
 class LiidimanageriConfig(Config):
-    DB_USERNAME = 'root'
-    DB_PASSWORD = ''
     DB_NAME = 'liidimanageri'
+    DB_USERNAME = Config.DB_USERNAME
+    DB_PASSWORD = Config.DB_PASSWORD
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://' + DB_USERNAME + ':' + DB_PASSWORD + '@localhost:3306/' + DB_NAME
     SQLALCHEMY_ECHO = True
+    # SQLALCHEMY_ECHO = "debug"
     FLASKY_MAIL_SUBJECT_PREFIX = '[Liidimanageri]'
     FLASKY_MAIL_SENDER = 'Liidimanageri Admin <omniakurssi@gmail.com>'
+    WTF_CSRF_ENABLED = False
 
 config = {
     'development': DevelopmentConfig,
