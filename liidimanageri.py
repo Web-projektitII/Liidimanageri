@@ -28,3 +28,14 @@ def test(test_names):
     else:
         tests = unittest.TestLoader().discover('tests')
     unittest.TextTestRunner(verbosity=2).run(tests)
+
+if __name__ == '__main__':
+    # app.run(app.run(host='0.0.0.0', port=5000, debug=True))
+    app.run(debug=True)
+
+# Suoritus VSC:n Run-valikosta miel. virtuaaliympäristössä tai 
+# komentorivillä:
+#   Python liidimanageri.py
+# tai: 
+#   set FLASK_APP=liidimanageri.py 
+#   python -m flask run
