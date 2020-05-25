@@ -1,2 +1,5 @@
-MAIL_USERNAME = 'omniakurssi@gmail.com'
-MAIL_PASSWORD = salasana
+MAIL_USERNAME = omniakurssi@gmail.com
+MAIL_PASSWORD = kurssi123
+DB_USERNAME_TUOTANTO = azure
+DB_PASSWORD_TUOTANTO = 6#vWHD_$
+ENV = prod
