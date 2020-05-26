@@ -1,1 +1,1 @@
-web: flask db upgrade; gunicorn liidimanageri:app
+web: gunicorn gettingstarted.wsgi --log-file -
