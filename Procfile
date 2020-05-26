@@ -1,1 +1,1 @@
-web: gunicorn liidimanageri:app
+web: flask db upgrade; gunicorn liidimanageri:app
