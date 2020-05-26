@@ -41,6 +41,6 @@ nosetests.xml
 # Virtual environment
 venv
 
-# Salasanat
-.env
+# Salasanat, huom. Herokuun .env
+# .env
 config_arvot
