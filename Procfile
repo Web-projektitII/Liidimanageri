@@ -1,0 +1,1 @@
+web: gunicorn liidimanageri:app
