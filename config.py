@@ -22,11 +22,17 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     ENV = os.environ.get('ENV')
     if ENV == 'prod':
+        DB_URL = 'us-cdbr-east-05.cleardb.net'
+        DB_NAME = 'heroku_3362c192f18dd93'
         DB_USERNAME = os.environ.get('DB_USERNAME_TUOTANTO')
         DB_PASSWORD = os.environ.get('DB_PASSWORD_TUOTANTO')
+        DB_URL = os.environ.get('CLEARDB_DATABASE_URL')
     else:
+        DB_URL = 'localhost'
+        DB_NAME = 'liidimanageri'
         DB_USERNAME = 'root'
         DB_PASSWORD = ''
+        DB_URL = 'localhost'
     @staticmethod
     def init_app(app):
         pass
@@ -46,10 +52,11 @@ class ProductionConfig(Config):
         'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 
 class LiidimanageriConfig(Config):
-    DB_NAME = 'liidimanageri'
+    DB_URL = Config.DB_URL
+    DB_NAME = Config.DB_NAME
     DB_USERNAME = Config.DB_USERNAME
     DB_PASSWORD = Config.DB_PASSWORD
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://' + DB_USERNAME + ':' + DB_PASSWORD + '@localhost:3306/' + DB_NAME
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://' + DB_USERNAME + ':' + DB_PASSWORD + '@'+DB_URL+':3306/' + DB_NAME
     SQLALCHEMY_ECHO = True
     # SQLALCHEMY_ECHO = "debug"
     FLASKY_MAIL_SUBJECT_PREFIX = '[Liidimanageri]'

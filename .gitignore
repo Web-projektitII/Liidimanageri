@@ -42,5 +42,6 @@ nosetests.xml
 venv
 
 # Salasanat
-.env
+# huom. Herokun repositoryyn siirretään myös .env
+# .env
 config_arvot
