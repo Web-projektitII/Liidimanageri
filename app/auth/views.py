@@ -40,9 +40,9 @@ def login():
         flash('Invalid email or password.')   
     return render_template('auth/login.html', form=form)
 
-@auth.route('/liidit', methods=['GET', 'POST'])
+@auth.route('/liidi', methods=['GET', 'POST'])
 @login_required
-def liidit():
+def liidi():
     form = LiidiForm()
     form.user_id.choices = [(c.id, c.username) for c in User.query.order_by('username')]
     if form.validate_on_submit():
@@ -72,10 +72,10 @@ def liidit():
             if ex_name == 'IntegrityError':
                 db.session.rollback()
                 flash("Liidi on jo olemassa!")  
-        return redirect(url_for('auth.liidit'))
+        return redirect(url_for('auth.liidi'))
     # testi = User.query.with_entities(User.id,User.username).order_by('username') 
     # form.user_id.choices = [(c.id, c.username) for c in User.query.order_by('username')]
-    return render_template('auth/liidit.html',form=form)
+    return render_template('auth/liidi.html',form=form)
 
 @auth.route('/tilanne')
 @login_required

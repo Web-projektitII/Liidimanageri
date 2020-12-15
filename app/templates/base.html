@@ -25,7 +25,7 @@
             <ul class="nav navbar-nav">
                 <li><a href="{{ url_for('main.index') }}">Home</a></li>
                 {% if current_user.is_authenticated %}
-                <li><a href="{{ url_for('auth.liidit') }}">Liidit</a></li>
+                <li><a href="{{ url_for('auth.liidi') }}">Liidi</a></li>
                 <li><a href="{{ url_for('auth.tilanne') }}">Tilanne</a></li>
                 {% endif %}
             </ul>
@@ -42,7 +42,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container content">
     {% for message in get_flashed_messages() %}
     <div class="alert alert-warning">
         <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -52,6 +52,12 @@
 
     {% block page_content %}{% endblock %}
 </div>
+{% block footer %}
+<div id="footer">
+    <span>&copy; 2020 Jukka, Omnia</span>
+</div>
+{%- endblock %}
+
 {% endblock %}
 
 {% block scripts %}
