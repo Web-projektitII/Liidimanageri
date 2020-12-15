@@ -2,11 +2,12 @@ import os
 from dotenv import load_dotenv
 
 # load dotenv in the base root
-APP_ROOT = os.path.join(os.path.dirname(__file__), '..')   # refers to application_top
-dotenv_path = os.path.join(APP_ROOT, '.env')
-load_dotenv(dotenv_path)
+# APP_ROOT = os.path.join(os.path.dirname(__file__), '..')   # refers to application_top
+# dotenv_path = os.path.join(APP_ROOT, '.env')
+# load_dotenv(dotenv_path)
 
 basedir = os.path.abspath(os.path.dirname(__file__))
+load_dotenv(os.path.join(basedir, '.env'))
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'
@@ -16,9 +17,9 @@ class Config:
         ['true', 'on', '1']
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-    FLASKY_MAIL_SUBJECT_PREFIX = '[Flasky]'
-    FLASKY_MAIL_SENDER = 'Flasky Admin <liidimanageri@example.com>'
-    FLASKY_ADMIN = os.environ.get('FLASKY_ADMIN')
+    LM_MAIL_SUBJECT_PREFIX = '[Liidimanageri]'
+    LM_MAIL_SENDER = 'Liidimanageri <wohjelmointi@gmail.com>'
+    LM_ADMIN = os.environ.get('LIIDIMANAGERI_ADMIN')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     @staticmethod
@@ -31,12 +32,10 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
 
-
 class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
         'sqlite://'
-
 
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
@@ -47,15 +46,30 @@ class LiidimanageriConfig(Config):
     DB_PASSWORD = ''
     DB_NAME = 'liidimanageri'
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://' + DB_USERNAME + ':' + DB_PASSWORD + '@localhost:3306/' + DB_NAME
-    SQLALCHEMY_ECHO = True
-    FLASKY_MAIL_SUBJECT_PREFIX = '[Liidimanageri]'
-    FLASKY_MAIL_SENDER = 'Liidimanageri Admin <omniakurssi@gmail.com>'
+    # SQLALCHEMY_ECHO = True
+    SQLALCHEMY_ECHO = "debug"
+    LM_MAIL_SUBJECT_PREFIX = '[Liidimanageri local]'
+    LM_MAIL_SENDER = 'Liidimanageri local admin <omniakurssi@gmail.com>'
+    WTF_CSRF_ENABLED = False
+
+class HerokuConfig(Config):
+    # DB_USERNAME = 'root'
+    # DB_PASSWORD = ''
+    # DB_NAME = 'liidimanageri'
+    # SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://' + DB_USERNAME + ':' + DB_PASSWORD + '@localhost:3306/' + DB_NAME
+    # SQLALCHEMY_ECHO = True
+    SQLALCHEMY_DATABASE_URI = os.environ.get('CLEARDB_DATABASE_URL')
+    SQLALCHEMY_ECHO = "debug"
+    LM_MAIL_SUBJECT_PREFIX = '[Liidimanageri]'
+    LM_MAIL_SENDER = 'Liidimanageri Admin <omniakurssi@gmail.com>'
+    WTF_CSRF_ENABLED = False    
 
 config = {
     'development': DevelopmentConfig,
     'testing': TestingConfig,
     'production': ProductionConfig,
-    'liidimanageri' : LiidimanageriConfig,
+    'local' : LiidimanageriConfig,
+    'heroku' : HerokuConfig,
     'default': LiidimanageriConfig
 
     # 'default': DevelopmentConfig

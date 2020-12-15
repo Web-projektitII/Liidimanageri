@@ -4,8 +4,11 @@ from flask_mail import Mail
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+# from flask_cors import CORS
 from config import config
+import logging
 
+logging.getLogger('flask_cors').level = logging.DEBUG
 bootstrap = Bootstrap()
 mail = Mail()
 moment = Moment()
@@ -17,6 +20,8 @@ login_manager.login_view = 'auth.login'
 
 def create_app(config_name):
     app = Flask(__name__)
+    # CORS(app)
+    # app.config["SQLALCHEMY_ECHO"] = True
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
     # print(config[config_name].SQLALCHEMY_DATABASE_URI)
