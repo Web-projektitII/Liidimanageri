@@ -19,7 +19,7 @@ class Config:
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     LM_MAIL_SUBJECT_PREFIX = '[Liidimanageri]'
     LM_MAIL_SENDER = 'Liidimanageri <wohjelmointi@gmail.com>'
-    LM_ADMIN = os.environ.get('LIIDIMANAGERI_ADMIN')
+    LM_ADMIN = os.environ.get('LM_ADMIN')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     @staticmethod
