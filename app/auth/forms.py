@@ -1,11 +1,12 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, Length, Email, Regexp, EqualTo
-from wtforms import ValidationError, SelectField
+from wtforms import ValidationError, SelectField, HiddenField
 # from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from ..models import User
 
 class LiidiForm(FlaskForm):
+    id = HiddenField('id')
     nimi = StringField('Nimi', validators=[
         DataRequired(), Length(1, 64),
         Regexp('^[A-Za-z][A-Za-z0-9_. ]*$', 0,
@@ -15,7 +16,7 @@ class LiidiForm(FlaskForm):
         Regexp('^[0-9]*$', 0, 'Puhelinnumerossa on vain numeroita')])
     yksikko = SelectField('Yksikkö', choices=[('Business','Business'),('IT','IT'),('HR','HR'),('Muu','Muu')])
     user_id = SelectField(u'Liidimanageri',coerce=int)
-    yksityinen = BooleanField('Yksityinen') 
+    yhteinen = BooleanField('Yhteinen') 
     todennakoisyys = SelectField('Todennäköisyys', choices=[(0.00,'0%'),(0.25,'25%'),(0.50,'50%'),(0.75,'75%'),(1.00,'100%')],coerce=float)
     submit = SubmitField('Lisää liidi')
 

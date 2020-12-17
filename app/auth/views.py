@@ -1,4 +1,5 @@
-from flask import render_template, redirect, request, url_for, flash
+from flask import render_template, redirect, request, url_for, flash, \
+    current_app
 from flask_login import login_user, logout_user, login_required, \
     current_user
 from . import auth
@@ -44,7 +45,8 @@ def login():
 @login_required
 def liidi():
     form = LiidiForm()
-    form.user_id.choices = [(c.id, c.username) for c in User.query.order_by('username')]
+    choices = [(c.id, c.username) for c in User.query.order_by('username')]
+    form.user_id.choices = choices
     if form.validate_on_submit():
         # liidi = Liidi.query.filter_by(nimi!=form.nimi.data,sahkoposti!=form.sahkoposti.data)
         # result = db.engine.execute("SELECT * FROM liidit")
@@ -59,23 +61,45 @@ def liidi():
                     yhteinen=int(not form.yksityinen.data), 
                     todennakoisyys=form.todennakoisyys.data)"""
        
-        liidi = Liidi()
-        form.populate_obj(liidi)
-        try:
-            db.session.add(liidi)
+        if form.id.data:
+            liidi = Liidi.query.filter_by(id=form.id.data).first()
+            form.populate_obj(liidi)
             db.session.commit()
-            flash("Liidi on lisätty.")  
-        # except exc.IntegrityError:
-        except Exception as ex:
-            #assert ex.__class__.__name__ == 'IntegrityError'
-            ex_name = ex.__class__.__name__
-            if ex_name == 'IntegrityError':
-                db.session.rollback()
-                flash("Liidi on jo olemassa!")  
-        return redirect(url_for('auth.liidi'))
+            flash("Liidin tiedot muutettiin.")  
+        else:    
+            liidi = Liidi()
+            form.populate_obj(liidi)
+            try:
+                db.session.add(liidi)
+                db.session.commit()
+                flash("Liidi on lisätty.")  
+            # except exc.IntegrityError:
+            except Exception as ex:
+                #assert ex.__class__.__name__ == 'IntegrityError'
+                ex_name = ex.__class__.__name__
+                if ex_name == 'IntegrityError':
+                    db.session.rollback()
+                    flash("Liidi on jo olemassa!")  
+            return redirect(url_for('auth.liidi'))
     # testi = User.query.with_entities(User.id,User.username).order_by('username') 
     # form.user_id.choices = [(c.id, c.username) for c in User.query.order_by('username')]
+    if 'id' in request.args:
+        id = request.args.get('id')
+        liidi = Liidi.query.get_or_404(id)
+        form = LiidiForm(obj=liidi)
+        form.user_id.choices = choices
+    
     return render_template('auth/liidi.html',form=form)
+
+@auth.route('/liidit', methods=['GET', 'POST'])
+@login_required
+def liidit():
+    page = request.args.get('page', 1, type=int)
+    pagination = Liidi.query.order_by(Liidi.nimi).paginate(
+        page, per_page=current_app.config['LM_POSTS_PER_PAGE'],
+        error_out=False)
+    lista = pagination.items
+    return render_template('auth/liidit.html',lista=lista,pagination=pagination)
 
 @auth.route('/tilanne')
 @login_required

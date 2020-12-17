@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block title %}Liidimanageri - liidit{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>Liidit</h1>
+</div>
+{% include '_lista.html' %}
+{% if pagination %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, '.liidit') }}
+</div>
+{% endif %}
+{% endblock %}

@@ -20,6 +20,7 @@ class Config:
     LM_MAIL_SUBJECT_PREFIX = '[Liidimanageri]'
     LM_MAIL_SENDER = 'Liidimanageri <wohjelmointi@gmail.com>'
     LM_ADMIN = os.environ.get('LM_ADMIN')
+    LM_POSTS_PER_PAGE = 25
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     @staticmethod
