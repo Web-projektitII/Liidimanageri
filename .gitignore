@@ -43,5 +43,6 @@ venv
 
 # Salasanat
 # huom. Herokun repositoryyn siirretään myös .env
-# .env
-config_arvot
+.env
+.gitignore
+
