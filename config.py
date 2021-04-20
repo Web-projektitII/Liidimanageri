@@ -43,9 +43,9 @@ class ProductionConfig(Config):
         'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 
 class LiidimanageriConfig(Config):
-    DB_USERNAME = 'root'
-    DB_PASSWORD = ''
-    DB_NAME = 'liidimanageri'
+    DB_USERNAME = os.environ.get('LOCAL_DB_USERNAME')
+    DB_PASSWORD = os.environ.get('LOCAL_DB_PASSWORD')
+    DB_NAME = os.environ.get('LOCAL_DB_NAME')
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://' + DB_USERNAME + ':' + DB_PASSWORD + '@localhost:3306/' + DB_NAME
     # SQLALCHEMY_ECHO = True
     SQLALCHEMY_ECHO = "debug"
