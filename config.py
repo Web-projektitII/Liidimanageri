@@ -22,12 +22,12 @@ class Config:
     LM_ADMIN = os.environ.get('LM_ADMIN')
     LM_POSTS_PER_PAGE = 25
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
+    
     @staticmethod
     def init_app(app):
         pass
 
-
+    
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
