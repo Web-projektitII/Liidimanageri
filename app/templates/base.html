@@ -4,6 +4,7 @@
 
 {% block head %}
 {{ super() }}
+{{ fontawesome_html() }}
 <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='site.css') }}">
@@ -66,4 +67,22 @@
 {% block scripts %}
 {{ super() }}
 {{ moment.include_moment() }}
+{{ moment.locale("fi",{
+    relativeTime : {
+        future : '%s päästä',
+        past : '%s sitten',
+        s : 'joitakin sekunteja',
+        m : 'yksi min',
+        mm : '%d min',
+        h : 'yksi t',
+        hh : '%d t',
+        d : 'yksi pv',
+        dd : '%d pv',
+        M : 'kk',
+        MM : '%d kk',
+        y : 'yksi v',
+        yy : '%d v'
+    }
+    })
+}}
 {% endblock %}

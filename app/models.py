@@ -18,7 +18,7 @@ class Liidi(db.Model):
     todennakoisyys = db.Column(db.Numeric(2,2))
     updated = db.Column(db.DateTime,default=datetime.utcnow,onupdate=datetime.utcnow)
     def __repr__(self):
-        return '<Liidi %r>' % self.name
+        return '<Liidi %r>' % self.nimi
 
 class Role(db.Model):
     __tablename__ = 'roles'

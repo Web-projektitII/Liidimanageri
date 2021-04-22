@@ -1,5 +1,5 @@
 from flask import render_template, redirect, request, url_for, flash, \
-    current_app
+    current_app, jsonify
 from flask_login import login_user, logout_user, login_required, \
     current_user
 from . import auth
@@ -41,6 +41,20 @@ def login():
         flash('Invalid email or password.')   
     return render_template('auth/login.html', form=form)
 
+
+@auth.route('/poista', methods=['GET', 'POST'])
+@login_required
+def poista():
+    id = request.form.get('id')
+    liidi = Liidi.query.get_or_404(id)
+    db.session.delete(liidi)
+    db.session.commit()
+    flash(f"Liidi {liidi.nimi} on poistettu.") 
+    # flash("Liidi on poistettu.") 
+    response = jsonify(success=True)
+    response.status_code = 200
+    return response
+
 @auth.route('/liidi', methods=['GET', 'POST'])
 @login_required
 def liidi():
@@ -63,16 +77,23 @@ def liidi():
        
         if form.id.data:
             liidi = Liidi.query.filter_by(id=form.id.data).first()
-            form.populate_obj(liidi)
-            db.session.commit()
-            flash("Liidin tiedot muutettiin.")  
+            try:
+                form.populate_obj(liidi)
+                db.session.commit()
+                flash(f"Liidin {liidi.nimi} tiedot tallennettiin.")  
+            except Exception as ex:
+                #assert ex.__class__.__name__ == 'IntegrityError'
+                ex_name = ex.__class__.__name__
+                if ex_name == 'IntegrityError':
+                    db.session.rollback()
+                    flash("Toinen liidi samoilla tiedoilla on jo olemassa!")  
         else:    
             liidi = Liidi()
-            form.populate_obj(liidi)
             try:
+                form.populate_obj(liidi)                
                 db.session.add(liidi)
                 db.session.commit()
-                flash("Liidi on lisätty.")  
+                flash(f"Liidi {liidi.nimi} on lisätty.")  
             # except exc.IntegrityError:
             except Exception as ex:
                 #assert ex.__class__.__name__ == 'IntegrityError'
@@ -88,7 +109,6 @@ def liidi():
         liidi = Liidi.query.get_or_404(id)
         form = LiidiForm(obj=liidi)
         form.user_id.choices = choices
-    
     return render_template('auth/liidi.html',form=form)
 
 @auth.route('/liidit', methods=['GET', 'POST'])
@@ -99,7 +119,7 @@ def liidit():
         page, per_page=current_app.config['LM_POSTS_PER_PAGE'],
         error_out=False)
     lista = pagination.items
-    return render_template('auth/liidit.html',lista=lista,pagination=pagination)
+    return render_template('auth/liidit.html',lista=lista,pagination=pagination,page=page)
 
 @auth.route('/tilanne')
 @login_required
@@ -118,7 +138,8 @@ def logout():
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
-    if form.validate_on_submit():
+    # if form.validate_on_submit() and form.flag is False:
+    if form.validate_on_submit():    
         user = User(email=form.email.data.lower(),
                     username=form.username.data,
                     password=form.password.data)
@@ -129,6 +150,9 @@ def register():
                    'auth/email/confirm', user=user, token=token)
         flash('A confirmation email has been sent to you by email.')
         return redirect(url_for('auth.login'))
+    # else:
+    #  print("flag: "+str(form.flag))
+
     return render_template('auth/register.html', form=form)
 
 @auth.route('/signin', methods=['GET', 'POST'])

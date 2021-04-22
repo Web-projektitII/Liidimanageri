@@ -21,6 +21,7 @@ ul.posts li.post:hover {
 }
 div.post-date {
     float: right;
+    min-width: 250px;
 }
 div.post-author {
     font-weight: bold;
@@ -31,4 +32,9 @@ div.post-thumbnail {
 div.post-content {
     margin-left: 48px;
     min-height: 48px;
+}
+
+.trash-space {
+    display:inline-block;
+    width:30px;
 }
