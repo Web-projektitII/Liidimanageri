@@ -22,11 +22,16 @@ class Config:
     LM_ADMIN = os.environ.get('LM_ADMIN')
     LM_POSTS_PER_PAGE = 25
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
+    ENV = os.environ.get('ENV')
+    if ENV == 'prod':
+        DB_USERNAME = os.environ.get('DB_USERNAME_TUOTANTO')
+        DB_PASSWORD = os.environ.get('DB_PASSWORD_TUOTANTO')
+    else:
+        DB_USERNAME = 'root'
+        DB_PASSWORD = ''
     @staticmethod
     def init_app(app):
         pass
-
 
 class DevelopmentConfig(Config):
     DEBUG = True
@@ -64,7 +69,7 @@ class HerokuConfig(Config):
     LM_MAIL_SUBJECT_PREFIX = '[Liidimanageri]'
     LM_MAIL_SENDER = 'Liidimanageri Admin <omniakurssi@gmail.com>'
     WTF_CSRF_ENABLED = False    
-
+   
 config = {
     'development': DevelopmentConfig,
     'testing': TestingConfig,
