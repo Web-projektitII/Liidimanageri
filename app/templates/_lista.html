@@ -1,0 +1,21 @@
+<ul class="posts">
+    {% for liidi in lista %}
+    <li class="post">
+        <div class="post-content">
+            <div class="post-date">
+                {% if current_user.id != liidi.user_id %}
+                <a title="poista" class="trash-space" href="#" onclick="poista('{{ liidi.id }}','{{ liidi.nimi }}')">
+                    <i class="fas fa-trash-alt"></i>
+                </a>
+                {% else %}
+                <span class="trash-space"></span>
+                {% endif %}
+                {{ moment(liidi.updated).fromNow() }}
+            </div>
+            <div class="post-author"><a href="{{ url_for('.liidi', id=liidi.id) }}">{{ liidi.nimi }}</a></div>
+            <div class="post-body">{{ liidi.puhelinnumero }}</div>
+            <div class="post-body">{{ liidi.sahkoposti }}</div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>

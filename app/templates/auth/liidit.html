@@ -1,14 +1,48 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
 
-{% block title %}Liidimanageri - Liidit{% endblock %}
+{% block title %}Liidimanageri - liidit{% endblock %}
 
 {% block page_content %}
+<script>
+    var poista = (id,nimi) => {
+        /* var id = obj.id;
+        var nimi = obj.nimi;
+        alert("id:"+id+",nimi:"+nimi);*/
+        /* const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const page = urlParams.get('page')
+        const url = "{{ url_for('auth.poista') }}" + '?page=' + page    
+        */
+        if (!confirm(`Liidi ${nimi} poistetaan.`)) return;
+        const url = "{{ url_for('auth.poista',page=page) }}";
+        /* alert('id:'+id+',url:'+url)
+        const url = '/auth/poista?page='+page 
+        */
+        const formData = new FormData();
+        formData.append('id', id);
+        fetch(url, {
+            method: 'POST',
+            body: formData,
+            })
+        .then(response => response.json())
+        .then(result => {
+            console.log('Success:', result);
+            document.location.reload(true);
+            })
+        .catch(error => {
+            console.error('Error:', error);
+            });
+        }
+</script>
 <div class="page-header">
     <h1>Liidit</h1>
 </div>
-<div class="col-md-4">
-    {{ wtf.quick_form(form) }}
-    <br>
+{% include '_lista.html' %}
+{% if pagination %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, '.liidit') }}
 </div>
+{% endif %}
 {% endblock %}

@@ -1,1 +1,1 @@
-Liidimanageri
+Liidimanageri -Flask-sovellus

@@ -1,3 +1,19 @@
 #puhelinnumero,#yksikko {width:150px;}
 /*#todennakoisyys,#liidimanageri {max-width:150px!important;}*/
 select  {max-width:150px!important;}
+body {
+position:relative;
+min-height: 100vh;
+}
+
+#footer {
+position:absolute;
+bottom:0;
+height:2.5rem;
+width:100%;
+text-align:center;
+} 
+
+.content {
+padding-bottom:5.0rem;
+}

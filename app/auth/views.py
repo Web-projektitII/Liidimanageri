@@ -1,4 +1,5 @@
-from flask import render_template, redirect, request, url_for, flash
+from flask import render_template, redirect, request, url_for, flash, \
+    current_app, jsonify
 from flask_login import login_user, logout_user, login_required, \
     current_user
 from . import auth
@@ -40,11 +41,26 @@ def login():
         flash('Invalid email or password.')   
     return render_template('auth/login.html', form=form)
 
-@auth.route('/liidit', methods=['GET', 'POST'])
+
+@auth.route('/poista', methods=['GET', 'POST'])
 @login_required
-def liidit():
+def poista():
+    id = request.form.get('id')
+    liidi = Liidi.query.get_or_404(id)
+    db.session.delete(liidi)
+    db.session.commit()
+    flash(f"Liidi {liidi.nimi} on poistettu.") 
+    # flash("Liidi on poistettu.") 
+    response = jsonify(success=True)
+    response.status_code = 200
+    return response
+
+@auth.route('/liidi', methods=['GET', 'POST'])
+@login_required
+def liidi():
     form = LiidiForm()
-    form.user_id.choices = [(c.id, c.username) for c in User.query.order_by('username')]
+    choices = [(c.id, c.username) for c in User.query.order_by('username')]
+    form.user_id.choices = choices
     if form.validate_on_submit():
         # liidi = Liidi.query.filter_by(nimi!=form.nimi.data,sahkoposti!=form.sahkoposti.data)
         # result = db.engine.execute("SELECT * FROM liidit")
@@ -59,23 +75,51 @@ def liidit():
                     yhteinen=int(not form.yksityinen.data), 
                     todennakoisyys=form.todennakoisyys.data)"""
        
-        liidi = Liidi()
-        form.populate_obj(liidi)
-        try:
-            db.session.add(liidi)
-            db.session.commit()
-            flash("Liidi on lisätty.")  
-        # except exc.IntegrityError:
-        except Exception as ex:
-            #assert ex.__class__.__name__ == 'IntegrityError'
-            ex_name = ex.__class__.__name__
-            if ex_name == 'IntegrityError':
-                db.session.rollback()
-                flash("Liidi on jo olemassa!")  
-        return redirect(url_for('auth.liidit'))
+        if form.id.data:
+            liidi = Liidi.query.filter_by(id=form.id.data).first()
+            try:
+                form.populate_obj(liidi)
+                db.session.commit()
+                flash(f"Liidin {liidi.nimi} tiedot tallennettiin.")  
+            except Exception as ex:
+                #assert ex.__class__.__name__ == 'IntegrityError'
+                ex_name = ex.__class__.__name__
+                if ex_name == 'IntegrityError':
+                    db.session.rollback()
+                    flash("Toinen liidi samoilla tiedoilla on jo olemassa!")  
+        else:    
+            liidi = Liidi()
+            try:
+                form.populate_obj(liidi)                
+                db.session.add(liidi)
+                db.session.commit()
+                flash(f"Liidi {liidi.nimi} on lisätty.")  
+            # except exc.IntegrityError:
+            except Exception as ex:
+                #assert ex.__class__.__name__ == 'IntegrityError'
+                ex_name = ex.__class__.__name__
+                if ex_name == 'IntegrityError':
+                    db.session.rollback()
+                    flash("Liidi on jo olemassa!")  
+            return redirect(url_for('auth.liidi'))
     # testi = User.query.with_entities(User.id,User.username).order_by('username') 
     # form.user_id.choices = [(c.id, c.username) for c in User.query.order_by('username')]
-    return render_template('auth/liidit.html',form=form)
+    if 'id' in request.args:
+        id = request.args.get('id')
+        liidi = Liidi.query.get_or_404(id)
+        form = LiidiForm(obj=liidi)
+        form.user_id.choices = choices
+    return render_template('auth/liidi.html',form=form)
+
+@auth.route('/liidit', methods=['GET', 'POST'])
+@login_required
+def liidit():
+    page = request.args.get('page', 1, type=int)
+    pagination = Liidi.query.order_by(Liidi.nimi).paginate(
+        page, per_page=current_app.config['LM_POSTS_PER_PAGE'],
+        error_out=False)
+    lista = pagination.items
+    return render_template('auth/liidit.html',lista=lista,pagination=pagination,page=page)
 
 @auth.route('/tilanne')
 @login_required
@@ -94,7 +138,8 @@ def logout():
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
-    if form.validate_on_submit():
+    # if form.validate_on_submit() and form.flag is False:
+    if form.validate_on_submit():    
         user = User(email=form.email.data.lower(),
                     username=form.username.data,
                     password=form.password.data)
@@ -105,6 +150,9 @@ def register():
                    'auth/email/confirm', user=user, token=token)
         flash('A confirmation email has been sent to you by email.')
         return redirect(url_for('auth.login'))
+    # else:
+    #  print("flag: "+str(form.flag))
+
     return render_template('auth/register.html', form=form)
 
 @auth.route('/signin', methods=['GET', 'POST'])
@@ -115,14 +163,12 @@ def signin():
         user = User.query.filter_by(email=form.email.data.lower()).first()
         if user is not None and user.verify_password(form.password.data):
             login_user(user, form.remember_me.data)
-            # next = request.args.get('next')
-            # if next is None or not next.startswith('/'):
-            #    next = url_for('main.index')
+            next = request.args.get('next')
+            if next is None or not next.startswith('/'):
+                next = url_for('main.index')
             return "OK"
-        else:
-            return "Kirjautuminen ei onnistunut."
     else:
-        print("validointivirheet:"+str(form.errors))
+        # print("validointivirheet:"+str(form.errors))
         return "Virhe lomakkeessa"
   
 @auth.route('/signup', methods=['GET', 'POST'])

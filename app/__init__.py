@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_bootstrap import Bootstrap
+from flask_fontawesome import FontAwesome
 from flask_mail import Mail
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
@@ -10,6 +11,7 @@ import logging
 
 logging.getLogger('flask_cors').level = logging.DEBUG
 bootstrap = Bootstrap()
+fa = FontAwesome()
 mail = Mail()
 moment = Moment()
 db = SQLAlchemy()
@@ -26,6 +28,7 @@ def create_app(config_name):
     config[config_name].init_app(app)
     # print(config[config_name].SQLALCHEMY_DATABASE_URI)
     bootstrap.init_app(app)
+    fa.init_app(app)
     mail.init_app(app)
     moment.init_app(app)
     db.init_app(app)
