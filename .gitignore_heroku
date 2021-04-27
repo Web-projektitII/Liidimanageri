@@ -43,3 +43,7 @@ venv
 
 # Salasanat
 # .env
+
+.gitignore
+.gitignore_github
+.gitignore_heroku
