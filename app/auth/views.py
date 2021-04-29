@@ -8,6 +8,7 @@ from ..models import User, Liidi
 from ..email import send_email
 from .forms import LoginForm, RegistrationForm, LiidiForm
 from flask_cors import cross_origin
+import sys
 
 
 @auth.before_app_request
@@ -58,6 +59,7 @@ def poista():
 @auth.route('/liidi', methods=['GET', 'POST'])
 @login_required
 def liidi():
+    sys.stderr.write('views.py,liidi\n')
     form = LiidiForm()
     choices = [(c.id, c.username) for c in User.query.order_by('username')]
     form.user_id.choices = choices
