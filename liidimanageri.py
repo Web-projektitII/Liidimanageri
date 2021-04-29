@@ -1,10 +1,14 @@
 import os
 import click
+import sys
 from flask_migrate import Migrate
 from app import create_app, db
 from app.models import User, Role
 
-app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+flaskconfig = os.getenv('FLASK_CONFIG') or 'default'
+sys.stderr.write('liidimanageri.py,FLASK_CONFIG:'+flaskconfig)
+# app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+app = create_app(flaskconfig)
 migrate = Migrate(app, db)
 # Tuo terminaaliin db init, db migrate ja db upgrade-komennot
 # Kerran flask db init, sitten flask db migrate -m "kuvaus" ja flask db upgrade
