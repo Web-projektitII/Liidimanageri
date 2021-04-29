@@ -3,8 +3,12 @@ import click
 from flask_migrate import Migrate
 from app import create_app, db
 from app.models import User, Role
+from dotenv import load_dotenv
 import sys
 
+if not os.getenv('FLASK_CONFIG'): 
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    load_dotenv(os.path.join(basedir, '.flaskenv'))
 flaskconfig = os.getenv('FLASK_CONFIG') or 'default'
 sys.stderr.write('liidimanageri.py,FLASK_CONFIG:'+flaskconfig+'\n')
 # app = create_app(os.getenv('FLASK_CONFIG') or 'default')
