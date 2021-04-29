@@ -1,12 +1,12 @@
 import os
 import click
-import sys
 from flask_migrate import Migrate
 from app import create_app, db
 from app.models import User, Role
+import sys
 
 flaskconfig = os.getenv('FLASK_CONFIG') or 'default'
-sys.stderr.write('liidimanageri.py,FLASK_CONFIG:'+flaskconfig)
+sys.stderr.write('liidimanageri.py,FLASK_CONFIG:'+flaskconfig+'\n')
 # app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 app = create_app(flaskconfig)
 migrate = Migrate(app, db)
