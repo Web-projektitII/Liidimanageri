@@ -1,4 +1,3 @@
 FLASK_APP = liidimanageri
-FLASK_ENV = development
-# FLASK_CONFIG = heroku
+FLASK_CONFIG = heroku
 FLASK_DEBUG = 0
