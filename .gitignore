@@ -42,6 +42,8 @@ nosetests.xml
 venv
 
 # Salasanat
-# .env
+# huom. Herokun repositoryyn siirretään myös .env
+.env
 requirements_new.txt
 requirements_old.txt
+
