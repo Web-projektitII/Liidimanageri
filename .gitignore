@@ -42,8 +42,9 @@ nosetests.xml
 venv
 
 # Salasanat
-# huom. Herokun repositoryyn siirretään myös .env
-.env
+# .env
 requirements_new.txt
 requirements_old.txt
-
+.gitignore
+.gitignore_heroku
+.gitignore_github
