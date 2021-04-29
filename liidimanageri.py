@@ -6,6 +6,7 @@ from app.models import User, Role
 from dotenv import load_dotenv
 import sys
 
+# Heroku ei lue automaattisesti .flaskenv-tiedostoa, toisin kuin flask run-komento
 if not os.getenv('FLASK_CONFIG'): 
     basedir = os.path.abspath(os.path.dirname(__file__))
     load_dotenv(os.path.join(basedir, '.flaskenv'))
