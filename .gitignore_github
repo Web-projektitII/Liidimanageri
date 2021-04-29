@@ -43,3 +43,5 @@ venv
 
 # Salasanat
 .env
+requirements_new.txt
+requirements_old.txt
