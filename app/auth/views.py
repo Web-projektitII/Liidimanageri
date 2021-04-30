@@ -48,10 +48,10 @@ def login():
 def poista():
     id = request.form.get('id')
     liidi = Liidi.query.get_or_404(id)
+    nimi = liidi.nimi
     db.session.delete(liidi)
     db.session.commit()
-    flash(f"Liidi {liidi.nimi} on poistettu.") 
-    # flash("Liidi on poistettu.") 
+    flash(f"Liidi {nimi} on poistettu.") 
     response = jsonify(success=True)
     response.status_code = 200
     return response
@@ -82,7 +82,7 @@ def liidi():
             try:
                 form.populate_obj(liidi)
                 db.session.commit()
-                flash(f"Liidin {liidi.nimi} tiedot tallennettiin.")  
+                flash(f"Liidin {form.nimi.data} tiedot tallennettiin.")  
             except Exception as ex:
                 #assert ex.__class__.__name__ == 'IntegrityError'
                 ex_name = ex.__class__.__name__
@@ -92,10 +92,10 @@ def liidi():
         else:    
             liidi = Liidi()
             try:
-                form.populate_obj(liidi)                
+                form.populate_obj(liidi)               
                 db.session.add(liidi)
                 db.session.commit()
-                flash(f"Liidi {liidi.nimi} on lisätty.")  
+                flash(f"Liidi {form.nimi.data} on lisätty.")  
             # except exc.IntegrityError:
             except Exception as ex:
                 #assert ex.__class__.__name__ == 'IntegrityError'
@@ -104,8 +104,9 @@ def liidi():
                     db.session.rollback()
                     flash("Liidi on jo olemassa!") 
                 else:
-                    flash("Virhe:"+ex_name) 
+                    flash("Virhe: "+ex_name) 
             finally:
+                # Siirrytään liidi-polun alkuun, lomake tyhjentyy
                 return redirect(url_for('auth.liidi'))
     # testi = User.query.with_entities(User.id,User.username).order_by('username') 
     # form.user_id.choices = [(c.id, c.username) for c in User.query.order_by('username')]
