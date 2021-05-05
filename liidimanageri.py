@@ -9,7 +9,10 @@ import sys
 # Heroku ei lue automaattisesti .flaskenv-tiedostoa, toisin kuin flask run-komento
 if not os.getenv('FLASK_CONFIG'): 
     basedir = os.path.abspath(os.path.dirname(__file__))
-    load_dotenv(os.path.join(basedir, '.flaskenv'))
+    if 'DYNO' in os.environ:
+        load_dotenv(os.path.join(basedir, '.flaskenv_heroku'))
+    else:
+        load_dotenv(os.path.join(basedir, '.flaskenv'))       
 flaskconfig = os.getenv('FLASK_CONFIG') or 'default'
 sys.stderr.write('liidimanageri.py,FLASK_CONFIG:'+flaskconfig+'\n')
 # app = create_app(os.getenv('FLASK_CONFIG') or 'default')
@@ -40,7 +43,7 @@ def test(test_names):
 
 if __name__ == '__main__':
     # app.run(app.run(host='0.0.0.0', port=5000, debug=True))
-    app.run(debug=True)
+    app.run(debug=False)
 
 # Suoritus VSC:n Run-valikosta miel. virtuaaliympäristössä tai 
 # komentorivillä:

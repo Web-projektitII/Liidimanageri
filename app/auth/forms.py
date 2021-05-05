@@ -10,11 +10,13 @@ class LiidiForm(FlaskForm):
     id = HiddenField('id')
     nimi = StringField('Nimi', validators=[
         DataRequired(), Length(1, 64),
-        Regexp('^[A-Za-z][A-Za-z0-9_. ]*$', 0,
-               'Nimessä on vain kirjaimia,välilyöntejä numeroita,pisteitä tai alaviivoja')])
+        Regexp('^[A-ZÅÄÖa-zåäö][A-ZÅÖÄa-zåäö0-9_. -]*$', 0,
+               'Nimessä on vain kirjaimia,välilyöntejä numeroita,pisteitä ja tavu- tai alaviivoja')])
     sahkoposti = StringField('Sähköpostiosoite', validators=[DataRequired(), Length(1, 64),Email()])
-    puhelinnumero = StringField('Puhelinnumero', validators=[DataRequired(),Length(5, 15),
-        Regexp('^[0-9]*$', 0, 'Puhelinnumerossa on vain numeroita')])
+    puhelinnumero = StringField('Puhelinnumero', 
+        validators=[DataRequired(),Length(5, 15),
+        Regexp('^[0-9]*$', 0, 
+        'Puhelinnumerossa on vain numeroita')])
     yksikko = SelectField('Yksikkö', choices=[('Business','Business'),('IT','IT'),('HR','HR'),('Muu','Muu')])
     user_id = SelectField(u'Liidimanageri',coerce=int)
     yhteinen = BooleanField('Yhteinen') 

@@ -59,7 +59,7 @@ def poista():
 @auth.route('/liidi', methods=['GET', 'POST'])
 @login_required
 def liidi():
-    sys.stderr.write('views.py,liidi\n')
+    sys.stderr.write('\nviews.py,LIIDI\n')
     form = LiidiForm()
     choices = [(c.id, c.username) for c in User.query.order_by('username')]
     form.user_id.choices = choices
@@ -86,6 +86,7 @@ def liidi():
             except Exception as ex:
                 #assert ex.__class__.__name__ == 'IntegrityError'
                 ex_name = ex.__class__.__name__
+                # print("\nVIRHE: "+ex_name+"\n")
                 if ex_name == 'IntegrityError':
                     db.session.rollback()
                     flash("Toinen liidi samoilla tiedoilla on jo olemassa!")  
@@ -110,7 +111,13 @@ def liidi():
                 return redirect(url_for('auth.liidi'))
     # testi = User.query.with_entities(User.id,User.username).order_by('username') 
     # form.user_id.choices = [(c.id, c.username) for c in User.query.order_by('username')]
-    if 'id' in request.args:
+    elif form.submit.data == True:
+        # Väärin täytetty muutoslomake
+        return render_template('auth/liidi.html',form=form)
+
+    if 'id' in request.args and not form.submit.data:
+        # Olemassa olevan liidin tiedot lomakkeelle
+        # Täytetyn lomakkeen tietoja ei tarvitse hakea tietokannasta
         id = request.args.get('id')
         liidi = Liidi.query.get_or_404(id)
         form = LiidiForm(obj=liidi)
