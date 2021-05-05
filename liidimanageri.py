@@ -3,8 +3,20 @@ import click
 from flask_migrate import Migrate
 from app import create_app, db
 from app.models import User, Role
+from dotenv import load_dotenv
+import sys
 
-app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+# Heroku ei lue automaattisesti .flaskenv-tiedostoa, toisin kuin flask run-komento
+if not os.getenv('FLASK_CONFIG'): 
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    if 'DYNO' in os.environ:
+        load_dotenv(os.path.join(basedir, '.flaskenv_heroku'))
+    else:
+        load_dotenv(os.path.join(basedir, '.flaskenv'))       
+flaskconfig = os.getenv('FLASK_CONFIG') or 'default'
+sys.stderr.write('liidimanageri.py,FLASK_CONFIG:'+flaskconfig+'\n')
+# app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+app = create_app(flaskconfig)
 migrate = Migrate(app, db)
 # Tuo terminaaliin db init, db migrate ja db upgrade-komennot
 # Kerran flask db init, sitten flask db migrate -m "kuvaus" ja flask db upgrade
@@ -31,7 +43,7 @@ def test(test_names):
 
 if __name__ == '__main__':
     # app.run(app.run(host='0.0.0.0', port=5000, debug=True))
-    app.run(debug=True)
+    app.run(debug=False)
 
 # Suoritus VSC:n Run-valikosta miel. virtuaaliympäristössä tai 
 # komentorivillä:

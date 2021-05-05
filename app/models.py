@@ -15,7 +15,7 @@ class Liidi(db.Model):
     yksikko = db.Column(db.String(64))
     yhteinen = db.Column(db.String(1))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    todennakoisyys = db.Column(db.Numeric(2,2))
+    todennakoisyys = db.Column(db.Numeric(3,2))
     updated = db.Column(db.DateTime,default=datetime.utcnow,onupdate=datetime.utcnow)
     def __repr__(self):
         return '<Liidi %r>' % self.nimi
