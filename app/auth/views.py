@@ -172,6 +172,8 @@ def register():
 @cross_origin(supports_credentials=True)
 def signin():
     form = LoginForm()
+    sys.stderr.write('\nviews.py,SIGNIN\n')
+    # print('\nviews.py,SIGNUP\n')
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data.lower()).first()
         if user is not None and user.verify_password(form.password.data):
@@ -188,6 +190,8 @@ def signin():
 @cross_origin(supports_credentials=True)
 def signup():
     form = RegistrationForm()
+    sys.stderr.write('\nviews.py,SIGNUP\n')
+    # print('\nviews.py,SIGNUP\n')
     if form.validate_on_submit():
         user = User(email=form.email.data.lower(),
                     username=form.username.data,
@@ -201,7 +205,7 @@ def signup():
         return "OK"
     else:
         # print("validointivirheet:"+str(form.errors))
-        return "Virhe lomakkeessa"
+        return "Virhe lomakkeessa:"+str(form.errors)
 
 @auth.route('/testi', methods=['GET', 'POST'])
 @cross_origin(supports_credentials=True)
