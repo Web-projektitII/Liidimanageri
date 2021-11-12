@@ -121,6 +121,7 @@ def liidi():
         id = request.args.get('id')
         liidi = Liidi.query.get_or_404(id)
         form = LiidiForm(obj=liidi)
+        # form.submit.label.text = 'Muuta'
         form.user_id.choices = choices
     return render_template('auth/liidi.html',form=form)
 
@@ -171,17 +172,20 @@ def register():
 @auth.route('/signin', methods=['GET', 'POST'])
 @cross_origin(supports_credentials=True)
 def signin():
+    # Ajax-versio 
     form = LoginForm()
-    sys.stderr.write('\nviews.py,SIGNIN\n')
+    sys.stderr.write('\nviews.py,SIGNIN:'+form.email.data+'\n')
     # print('\nviews.py,SIGNUP\n')
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data.lower()).first()
         if user is not None and user.verify_password(form.password.data):
             login_user(user, form.remember_me.data)
-            next = request.args.get('next')
-            if next is None or not next.startswith('/'):
-                next = url_for('main.index')
+            # next = request.args.get('next')
+            # if next is None or not next.startswith('/'):
+            #    next = url_for('main.index')
             return "OK"
+        else:
+            return "Väärä salasana"    
     else:
         # print("validointivirheet:"+str(form.errors))
         return "Virhe lomakkeessa"
@@ -211,9 +215,9 @@ def signup():
 @cross_origin(supports_credentials=True)
 def testi():
     form = RegistrationForm()
-    user = User(email=username,
-                username=username,
-                password=password,
+    user = User(email=form.username,
+                username=form.username,
+                password=form.password,
                 role_id='',
                 confirmed='1'
                 )

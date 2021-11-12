@@ -3,7 +3,7 @@
     <li class="post">
         <div class="post-content">
             <div class="post-date">
-                {% if current_user.id != liidi.user_id %}
+                {% if current_user.id == liidi.user_id %}
                 <a title="poista" class="trash-space" href="#" onclick="poista('{{ liidi.id }}','{{ liidi.nimi }}')">
                     <i class="fas fa-trash-alt"></i>
                 </a>

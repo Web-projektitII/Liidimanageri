@@ -21,7 +21,7 @@ class LiidiForm(FlaskForm):
     user_id = SelectField(u'Liidimanageri',coerce=int)
     yhteinen = BooleanField('Yhteinen') 
     todennakoisyys = SelectField('Todennäköisyys', choices=[(0.00,'0%'),(0.25,'25%'),(0.50,'50%'),(0.75,'75%'),(1.00,'100%')],coerce=float)
-    submit = SubmitField('Lisää liidi')
+    submit = SubmitField('Lisää tai muuta liidi')
 
 
 class LoginForm(FlaskForm):
