@@ -43,7 +43,7 @@ venv
 .vscode
 
 # Salasanat
-# .env
+.env
 requirements_new.txt
 requirements_old.txt
 .gitignore
