@@ -68,6 +68,13 @@ class User(UserMixin, db.Model):
         db.session.add(self)
         return True
 
+    def to_dict(self):
+        return {
+            'username': self.username,
+            'email': self.email
+        }
+
+
     def __repr__(self):
         return '<User %r>' % self.username
 

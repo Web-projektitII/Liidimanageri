@@ -3,6 +3,7 @@ import click
 from flask_migrate import Migrate
 from app import create_app, db
 from app.models import User, Role
+from config import LANGUAGE
 from dotenv import load_dotenv
 import sys
 
@@ -24,6 +25,11 @@ migrate = Migrate(app, db)
 # with app.app_context():
     # Tätä ei tarvita, jos tietokanta on päivitetty terminaalissa
     # db.create_all()
+
+# DataTables
+@app.context_processor
+def kielivalinta():
+    return dict(kieli = LANGUAGE)
 
 @app.shell_context_processor
 def make_shell_context():

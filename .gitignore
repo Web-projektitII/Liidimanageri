@@ -43,9 +43,10 @@ venv
 .vscode
 
 # Salasanat
-# .env
+.env
 requirements_new.txt
 requirements_old.txt
-.gitignore
-.gitignore_heroku
+.gitignore_VSC
+.gitignore_local
 .gitignore_github
+.gitignore_heroku
