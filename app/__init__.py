@@ -5,6 +5,7 @@ from flask_mail import Mail
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+# react-liidimanageria varten
 # from flask_cors import CORS
 from config import config
 import logging
@@ -22,6 +23,7 @@ login_manager.login_view = 'auth.login'
 
 def create_app(config_name):
     app = Flask(__name__)
+    # react-liidimanageria varten
     # CORS(app)
     # app.config["SQLALCHEMY_ECHO"] = True
     app.config.from_object(config[config_name])

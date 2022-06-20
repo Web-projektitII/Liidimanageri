@@ -26,6 +26,8 @@ class Config:
     LM_ADMIN = os.environ.get('LM_ADMIN')
     LM_POSTS_PER_PAGE = 25
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    # react-liidimanageria varten
+    # CORS_HEADERS = 'Content-Type'
 
     @staticmethod
     def init_app(app):

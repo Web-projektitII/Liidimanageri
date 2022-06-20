@@ -20,6 +20,12 @@ def before_request():
             and request.endpoint != 'static':
         return redirect(url_for('auth.unconfirmed'))
 
+#@auth.after_request 
+#def after_request(response):
+#    header = response.headers
+#    header['Access-Control-Allow-Origin'] = '*'
+#    # Other headers can be added here if required
+#    return response
 
 @auth.route('/unconfirmed')
 def unconfirmed():
@@ -215,6 +221,7 @@ def signup():
 @cross_origin(supports_credentials=True)
 def testi():
     form = RegistrationForm()
+    
     user = User(email=form.username,
                 username=form.username,
                 password=form.password,

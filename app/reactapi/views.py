@@ -68,18 +68,25 @@ def signin():
             # next = request.args.get('next')
             # if next is None or not next.startswith('/'):
             #    next = url_for('main.index')
+            sys.stderr.write('\nviews.py,SIGNIN:OK\n')
             return "OK"
         else:
-            return "Väärä salasana"    
+            response = jsonify({'virhe':'Väärät tunnukset'})
+            # response.status_code = 200
+            return response
+            # return "Väärä salasana"    
     else:
         # print("validointivirheet:"+str(form.errors))
-        return "Virhe lomakkeessa"
+        response = jsonify(form.errors)
+        # response.status_code = 200
+        return response
+        # return "Virhe lomakkeessa"
   
 @reactapi.route('/signup', methods=['GET', 'POST'])
 @cross_origin(supports_credentials=True)
 def signup():
     form = RegistrationForm()
-    sys.stderr.write('\nviews.py,SIGNUP\n')
+    sys.stderr.write('\nviews.py,SIGNUP,email:'+form.email.data+'\n')
     # print('\nviews.py,SIGNUP\n')
     if form.validate_on_submit():
         user = User(email=form.email.data.lower(),
@@ -94,25 +101,29 @@ def signup():
         return "OK"
     else:
         # print("validointivirheet:"+str(form.errors))
-        return "Virhe lomakkeessa:"+str(form.errors)
+        # return "Virhe lomakkeessa:"+str(form.errors)
+        response = jsonify(form.errors)
+        response.status_code = 200
+        return response
 
 @reactapi.route('/testi', methods=['GET', 'POST'])
 @cross_origin(supports_credentials=True)
 def testi():
     form = RegistrationForm()
-    user = User(email=form.username,
+    if form.validate_on_submit():  
+        user = User(email=form.email,
                 username=form.username,
                 password=form.password,
                 role_id='',
-                confirmed='1'
-                )
-    try:
-        db.session.add(user)
-        db.session.commit()
-    except Exception as ex:
-        ex_name = ex.__class__.__name__
-        if ex_name == 'IntegrityError':
-            db.session.rollback()
-        return "db:"+ex_name
-    return "OK"
+                confirmed='1')
+        try:
+            db.session.add(user)
+            db.session.commit()
+        except Exception as ex:
+            ex_name = ex.__class__.__name__
+            if ex_name == 'IntegrityError':
+                db.session.rollback()
+            return "db:"+ex_name
+        return "OK"
+    return "Virhe"
 
