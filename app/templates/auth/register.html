@@ -1,13 +1,21 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
+<<<<<<< HEAD
 {% block title %}Liidimanageri - Register{% endblock %}
+=======
+{% block title %}Flasky - Register{% endblock %}
+>>>>>>> kehitys-10b
 
 {% block page_content %}
 <div class="page-header">
     <h1>Register</h1>
 </div>
 <div class="col-md-4">
+<<<<<<< HEAD
     {{ wtf.quick_form(form) }}
+=======
+{{ wtf.quick_form(form, button_map={'submit': 'primary'}) }}
+>>>>>>> kehitys-10b
 </div>
 {% endblock %}

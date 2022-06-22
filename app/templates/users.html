@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% macro render_user(user) %}
+<tr>
+<td>{{ user.name }}</td>
+<td>{{ user.email }}</td>
+<td><button class="btn btn-primary" onClick="lisaarivi(event,this);">Tallenna</button></td>
+</tr>
+{% endmacro %}
+
+{% block title %}Flasky users{% endblock %}
+{% block page_content %}
+
+<script>
+    function lisaarivi(e,el){
+    e.preventDefault();
+    let taulu = document.querySelector(".table");
+    let rivi = el.parentNode.parentNode.cloneNode(true);
+    taulu.appendChild(rivi);
+    }     
+</script>
+
+<div class="page-header">
+    <h1>Users</h1>
+    {% if current_user.is_administrator() %}
+    <form>
+    <table class="table table-striped">
+    <tr><th>Name</th><th>Email</th></tr>    
+        {% for user in users %}
+        {{ render_user(user) }}
+        {% endfor %}
+    </table>
+    </form>
+
+    {% endif %}
+</div>
+
+{% endblock %}

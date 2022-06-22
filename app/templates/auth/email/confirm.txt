@@ -1,6 +1,10 @@
 Dear {{ user.username }},
 
+<<<<<<< HEAD
 Welcome to Liidimanageri!
+=======
+Welcome to Flasky!
+>>>>>>> kehitys-10b
 
 To confirm your account please click on the following link:
 
@@ -8,6 +12,10 @@ To confirm your account please click on the following link:
 
 Sincerely,
 
+<<<<<<< HEAD
 The Liidimanageri Team
+=======
+The Flasky Team
+>>>>>>> kehitys-10b
 
 Note: replies to this email address are not monitored.

@@ -4,15 +4,15 @@ from flask_mail import Message
 from . import mail
 import sys
 
-
 def send_async_email(app, msg):
     with app.app_context():
         try:
             mail.send(msg)
+            sys.stderr.write('Sahkoposti lahetetty\n')
         except Exception as ex:
             ex_name = ex.__class__.__name__
-            if ex_name == 'SMTPSenderRefused':
-                sys.stderr.write(ex_name)
+            sys.stderr.write('Sahkopostilahetysvirhe: ' + ex_name + '\n')
+            sys.stderr.write(ex + '\n')
 
 def send_email(to, subject, template, **kwargs):
     app = current_app._get_current_object()

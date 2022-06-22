@@ -21,19 +21,19 @@ class Config:
         ['true', 'on', '1']
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-    LM_MAIL_SUBJECT_PREFIX = '[Liidimanageri]'
     LM_MAIL_SENDER = 'Liidimanageri <wohjelmointi@gmail.com>'
     LM_ADMIN = os.environ.get('LM_ADMIN')
     LM_POSTS_PER_PAGE = 25
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # react-liidimanageria varten
     # CORS_HEADERS = 'Content-Type'
-
+    DEBUG = True
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
+        'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
     @staticmethod
     def init_app(app):
         pass
-
-
+    
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
@@ -75,7 +75,6 @@ config = {
     'development': DevelopmentConfig,
     'testing': TestingConfig,
     'production': ProductionConfig,
-    'local' : LiidimanageriConfig,
     'heroku' : HerokuConfig,
     'default': LiidimanageriConfig
 

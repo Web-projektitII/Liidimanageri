@@ -39,7 +39,6 @@ nosetests.xml
 *.sqlite
 
 # Virtual environment
-venv
 .vscode
 
 # Salasanat

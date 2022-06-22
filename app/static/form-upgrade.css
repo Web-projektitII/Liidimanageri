@@ -1,0 +1,24 @@
+.invalid-feedback,.help-block{
+    color:red;
+    display:inline-block;
+    font-size:1rem;
+}
+
+.btn {margin-top:10px;}
+.btn-close {float:right;}
+.btn-default {border:1px solid grey;}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    }
+  
+.container {flex:1;}
+
+footer {
+    margin:0 auto;
+    padding:10px;
+  }
+
+

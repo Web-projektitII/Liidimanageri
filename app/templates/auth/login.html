@@ -1,15 +1,25 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
+<<<<<<< HEAD
 {% block title %}Liidimanageri - Login{% endblock %}
+=======
+{% block title %}Flasky - Login{% endblock %}
+>>>>>>> kehitys-10b
 
 {% block page_content %}
 <div class="page-header">
     <h1>Login</h1>
 </div>
 <div class="col-md-4">
+<<<<<<< HEAD
     {{ wtf.quick_form(form) }}
     <br>
+=======
+    {{ wtf.quick_form(form, button_map={'submit': 'primary'}) }}
+    <br>
+    <p>Forgot your password? <a href="{{ url_for('auth.password_reset_request') }}">Click here to reset it</a>.</p>
+>>>>>>> kehitys-10b
     <p>New user? <a href="{{ url_for('auth.register') }}">Click here to register</a>.</p>
 </div>
 {% endblock %}
