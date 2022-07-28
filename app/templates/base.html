@@ -14,35 +14,28 @@
 {% endblock %}
 
 {% block navbar %}
-<nav class="navbar navbar-inverse navbar-static-top" role="navigation">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="{{ url_for('main.index') }}">Liidimanageri</a>
-        </div>
-        <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-                <li><a href="{{ url_for('main.index') }}">Home</a></li>
-                {% if current_user.is_authenticated %}
-                <li><a href="{{ url_for('auth.liidi') }}">Uusi liidi</a></li>
-                <li><a href="{{ url_for('auth.liidit') }}">Liidit</a></li>
-                <li><a href="{{ url_for('auth.server_table') }}">Käyttäjät</a></li>
-                <li><a href="{{ url_for('auth.tilanne') }}">Tilanne</a></li>
-                {% endif %}
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-                {% if current_user.is_authenticated %}
-                <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
-                {% else %}
-                <li><a href="{{ url_for('auth.login') }}">Log In</a></li>
-                {% endif %}
-            </ul>
-        </div>
+<nav class="navbar navbar-expand-md bg-dark navbar-dark">
+    <a class="navbar-brand" href="{{ url_for('main.index') }}">Liidimanageri</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="navbar-collapse collapse">
+    <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.index') }}">Home</a></li>
+        {% if current_user.is_authenticated %}
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.liidi') }}">Uusi liidi</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.liidit') }}">Liidit</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.server_table') }}">Käyttäjät</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.tilanne') }}">Tilanne</a></li>
+        {% endif %}
+    </ul>
+    <ul class="navbar-nav ml-auto">
+        {% if current_user.is_authenticated %}
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}">Log Out</a></li>
+        {% else %}
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Log In</a></li>
+        {% endif %}
+    </ul>
     </div>
 </nav>
 {% endblock %}
@@ -59,7 +52,7 @@
 </div>
 {% block footer %}
 <div id="footer">
-    <span>&copy; 2021 Jukka Aula</span>
+    <span>&copy; 2022 Jukka Aula</span>
 </div>
 {%- endblock %}
 
