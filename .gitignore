@@ -38,7 +38,8 @@ nosetests.xml
 # SQLite databases
 *.sqlite
 
-# Virtual environment
+# Virtual 
+env
 venv
 .vscode
 
