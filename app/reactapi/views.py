@@ -13,6 +13,7 @@ import sys
 
 @reactapi.before_app_request
 def before_request():
+    
     if current_user.is_authenticated \
             and not current_user.confirmed \
             and request.endpoint \
@@ -45,21 +46,29 @@ def liidit():
     # return render_template('auth/liidit.html',lista=lista,pagination=pagination,page=page)
     return
 
+# Huom. Tässä on jäetty 'OPTIONS' ja origins varmuuden vuoksi,
+# axios-kutsuja ei ole testattu ilman niitä,
+# fetch-kutsut toimivat ilmankin.
+# Axios on korvattu fetchillä, jotta käyttäjän istunto säilyy eli
+# sen vaatimat evästeet välittyvät selaimelta oikein. 
 @reactapi.route('/logout')
+@cross_origin(supports_credentials=True)
 @login_required
 def logout():
+    sessio = request.cookies.get('session')
+    print(f"reactapi/logout,sessio:{sessio}")
     logout_user()
     # Tämä pitää muuttaa
     # flash('You have been logged out.')
     # return redirect(url_for('main.index'))
-    return
+    return "OK"
 
-@reactapi.route('/signin', methods=['GET', 'POST'])
-@cross_origin(supports_credentials=True)
+@reactapi.route('/signin', methods=['GET', 'POST','OPTIONS'])
+@cross_origin(supports_credentials=True,origins=['http://localhost:3000'])
 def signin():
     # Ajax-versio 
     form = LoginForm()
-    sys.stderr.write('\nviews.py,SIGNIN:'+form.email.data+'\n')
+    sys.stderr.write(f"\nviews.py,SIGNIN:{form.email.data}'\n")
     # print('\nviews.py,SIGNUP\n')
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data.lower()).first()
@@ -69,7 +78,7 @@ def signin():
             # if next is None or not next.startswith('/'):
             #    next = url_for('main.index')
             sys.stderr.write('\nviews.py,SIGNIN:OK\n')
-            return "OK"
+            return 'OK'
         else:
             response = jsonify({'virhe':'Väärät tunnukset'})
             # response.status_code = 200
@@ -127,3 +136,25 @@ def testi():
         return "OK"
     return "Virhe"
 
+
+
+# Tarvitaanko tätä, kun preflight request?
+# @reactapi.route('/haeProfiili', methods=['GET', 'POST', 'OPTIONS'])
+@reactapi.route('/haeProfiili', methods=['GET', 'POST'])
+# Tarvitaanko tätä, unsafe cross domain request?
+# credentials:'include' => unsafe request => origin määritettävä muuksi kuin '*'
+# @cross_origin(supports_credentials=True,origin='localhost:3000'
+# Evästeet lähetetään myös cross domain
+@cross_origin(supports_credentials=True,origins=['http://localhost:3000'])
+@login_required
+def haeProfiili():
+    id = current_user.get_id()
+    # taulun rivi objektiksi
+    print("RESPONSE:",current_user.get_id())
+    user = {
+        'email':current_user.email,
+        'username':current_user.username
+        }
+    response = jsonify(user)
+    response.status_code = 200
+    return response

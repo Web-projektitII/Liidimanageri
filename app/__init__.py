@@ -6,7 +6,7 @@ from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 # react-liidimanageria varten
-# from flask_cors import CORS
+from flask_cors import CORS
 from config import config
 import logging
 
@@ -24,7 +24,7 @@ login_manager.login_view = 'auth.login'
 def create_app(config_name):
     app = Flask(__name__)
     # react-liidimanageria varten
-    # CORS(app)
+    CORS(app)
     # app.config["SQLALCHEMY_ECHO"] = True
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
@@ -43,6 +43,8 @@ def create_app(config_name):
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
 
     from .reactapi import reactapi as reactapi_blueprint
+    # Tarvitaanko tätä?
+    # CORS(reactapi_blueprint)
     app.register_blueprint(reactapi_blueprint, url_prefix='/reactapi')
 
     return app
