@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask,jsonify
 from flask_bootstrap import Bootstrap
 from flask_fontawesome import FontAwesome
 from flask_mail import Mail
@@ -17,8 +17,21 @@ mail = Mail()
 moment = Moment()
 db = SQLAlchemy()
 
+# def kirjautumisvirhe():
+#    response = {'virhe':'Kirjautuminen puuttuu.'}
+#    return jsonify(response)
+
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
+
+# Jos blueprintille tarvitaan oma unauthorized_handler, se
+# voidaan toteuttaa aiheuttamalla puuttuvalla login_view:llä
+# 401-virhe ja käsitellään se blueprintin 401-virhekäsittelijällä.
+login_manager.blueprint_login_views = {'reactapi':''}
+
+# Jos yksi login_manager ja sen unauthorized_handler riittävät.
+# Tämä ei aiheuta 401-virhettä.
+# login_manager.unauthorized_handler(kirjautumisvirhe)
 
 
 def create_app(config_name):
@@ -43,6 +56,7 @@ def create_app(config_name):
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
 
     from .reactapi import reactapi as reactapi_blueprint
+    login_manager.init_app(reactapi_blueprint)
     # Tarvitaanko tätä?
     # CORS(reactapi_blueprint)
     app.register_blueprint(reactapi_blueprint, url_prefix='/reactapi')

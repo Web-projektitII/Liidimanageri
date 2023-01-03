@@ -1,7 +1,10 @@
 from flask import render_template, redirect, request, url_for, flash, \
-    current_app, jsonify
-from flask_login import login_user, logout_user, login_required, \
-    current_user
+    current_app, jsonify, make_response
+from flask_login import (
+    login_user, 
+    logout_user, 
+    login_required, 
+    current_user)
 from . import reactapi
 from .. import db
 from ..models import User, Liidi
@@ -11,9 +14,19 @@ from flask_cors import cross_origin
 import sys
 
 
+@reactapi.app_errorhandler(401)
+def page_not_allowed(e):
+    default_origin = 'http://localhost:3000'
+    # origin = request.environ.get('HTTP_ORIGIN',default_origin)
+    origin = request.headers.get('Origin',default_origin)
+    message = {'virhe':'Kirjautuminen puuttuu.'}
+    response = make_response(jsonify(message))    
+    response.headers.set('Access-Control-Allow-Credentials','true')
+    response.headers.set('Access-Control-Allow-Origin',origin) 
+    return response
+
 @reactapi.before_app_request
 def before_request():
-    
     if current_user.is_authenticated \
             and not current_user.confirmed \
             and request.endpoint \
@@ -53,6 +66,9 @@ def liidit():
 # sen vaatimat evästeet välittyvät selaimelta oikein. 
 @reactapi.route('/logout')
 @cross_origin(supports_credentials=True)
+# Huom. Header asettuu automaattisesti oikein: 
+# Access-Control-Allow-Origin: http://localhost:3000
+
 @login_required
 def logout():
     sessio = request.cookies.get('session')
@@ -145,8 +161,14 @@ def testi():
 # credentials:'include' => unsafe request => origin määritettävä muuksi kuin '*'
 # @cross_origin(supports_credentials=True,origin='localhost:3000'
 # Evästeet lähetetään myös cross domain
-@cross_origin(supports_credentials=True,origins=['http://localhost:3000'])
+# @cross_origin(supports_credentials=True,origins=['http://localhost:3000'])
+@cross_origin(supports_credentials=True)
 @login_required
+# Huom. Header Access-Control-Allow-Credentials: true ei välity,
+# jos ei ole kirjautunut eli session-evästettä ei saavu, ja syntyy
+# CORS-virhe. Näin myös, jos @login_manager.login_view on asettamatta, sillä tällöin 
+# suoritus päättyy 401-virheeseen. Tämä tilanne voidaan käsitellä
+# blueprintin 401-virhekäsittelijällä.  
 def haeProfiili():
     id = current_user.get_id()
     # taulun rivi objektiksi
