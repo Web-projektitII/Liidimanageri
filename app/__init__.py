@@ -23,16 +23,13 @@ db = SQLAlchemy()
 
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
-
-# Jos blueprintille tarvitaan oma unauthorized_handler, se
-# voidaan toteuttaa aiheuttamalla puuttuvalla login_view:llä
-# 401-virhe ja käsitellään se blueprintin 401-virhekäsittelijällä.
+'''Jos blueprintille tarvitaan oma unauthorized_handler, se
+voidaan toteuttaa aiheuttamalla puuttuvalla login_view:llä
+401-virhe ja käsitellä se blueprintin 401-virhekäsittelijällä.'''
 login_manager.blueprint_login_views = {'reactapi':''}
-
-# Jos yksi login_manager ja sen unauthorized_handler riittävät.
+''' Jos yksi login_manager ja sen unauthorized_handler riittävät.
 # Tämä ei aiheuta 401-virhettä.
-# login_manager.unauthorized_handler(kirjautumisvirhe)
-
+# login_manager.unauthorized_handler(kirjautumisvirhe)'''
 
 def create_app(config_name):
     app = Flask(__name__)
