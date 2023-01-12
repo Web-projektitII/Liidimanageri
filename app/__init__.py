@@ -7,6 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 # react-liidimanageria varten
 from flask_cors import CORS
+from flask_wtf.csrf import CSRFProtect
 from config import config
 import logging
 
@@ -16,6 +17,7 @@ fa = FontAwesome()
 mail = Mail()
 moment = Moment()
 db = SQLAlchemy()
+csrf = CSRFProtect()
 
 # def kirjautumisvirhe():
 #    response = {'virhe':'Kirjautuminen puuttuu.'}
@@ -23,18 +25,19 @@ db = SQLAlchemy()
 
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
+# login_manager.session_protection = "strong"
 '''Jos blueprintille tarvitaan oma unauthorized_handler, se
 voidaan toteuttaa aiheuttamalla puuttuvalla login_view:llä
 401-virhe ja käsitellä se blueprintin 401-virhekäsittelijällä.'''
 login_manager.blueprint_login_views = {'reactapi':''}
-''' Jos yksi login_manager ja sen unauthorized_handler riittävät.
-# Tämä ei aiheuta 401-virhettä.
-# login_manager.unauthorized_handler(kirjautumisvirhe)'''
+''' Jos taas yksi login_manager ja sen unauthorized_handler riittävät,
+tämä ei aiheuta 401-virhettä:
+login_manager.unauthorized_handler(kirjautumisvirhe)'''
 
 def create_app(config_name):
     app = Flask(__name__)
-    # react-liidimanageria varten
-    CORS(app)
+    # reactia varten
+    CORS(app,expose_headers=["Content-Type","X-CSRFToken"])
     # app.config["SQLALCHEMY_ECHO"] = True
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
@@ -45,6 +48,7 @@ def create_app(config_name):
     moment.init_app(app)
     db.init_app(app)
     login_manager.init_app(app)
+    csrf.init_app(app) 
 
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
@@ -53,8 +57,7 @@ def create_app(config_name):
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
 
     from .reactapi import reactapi as reactapi_blueprint
-    login_manager.init_app(reactapi_blueprint)
-    # Tarvitaanko tätä?
+    # Tarvitaanko tätä, toimisiko?
     # CORS(reactapi_blueprint)
     app.register_blueprint(reactapi_blueprint, url_prefix='/reactapi')
 

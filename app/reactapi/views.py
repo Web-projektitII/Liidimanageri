@@ -11,19 +11,27 @@ from ..models import User, Liidi
 from ..email import send_email
 from ..auth.forms import LoginForm, RegistrationForm, LiidiForm
 from flask_cors import cross_origin
+from flask_wtf.csrf import generate_csrf,CSRFError
 import sys
 
-
-@reactapi.app_errorhandler(401)
-def page_not_allowed(e):
+def createResponse(message):
+    # CORS:n vaatimat Headerit
     default_origin = 'http://localhost:3000'
-    # origin = request.environ.get('HTTP_ORIGIN',default_origin)
     origin = request.headers.get('Origin',default_origin)
-    message = {'virhe':'Kirjautuminen puuttuu.'}
     response = make_response(jsonify(message))    
     response.headers.set('Access-Control-Allow-Credentials','true')
     response.headers.set('Access-Control-Allow-Origin',origin) 
     return response
+
+@reactapi.app_errorhandler(CSRFError)
+def handle_csrf_error(e):
+    message = {'virhe':'csrf-token puuttuu.'}
+    return createResponse(message)
+
+@reactapi.app_errorhandler(401)
+def page_not_allowed(e):
+    message = {'virhe':'Kirjautuminen puuttuu.'}
+    return createResponse(message)
 
 @reactapi.before_app_request
 def before_request():
@@ -59,6 +67,15 @@ def liidit():
     # return render_template('auth/liidit.html',lista=lista,pagination=pagination,page=page)
     return
 
+@reactapi.route("/getcsrf", methods=["GET"])
+@cross_origin(supports_credentials=True)
+def get_csrf():
+    token = generate_csrf()
+    response = jsonify({"detail": "CSRF cookie set"})
+    response.headers.set('Access-Control-Expose-Headers','X-CSRFToken') 
+    response.headers.set("X-CSRFToken", token)
+    return response
+
 # Huom. Tässä on jäetty 'OPTIONS' ja origins varmuuden vuoksi,
 # axios-kutsuja ei ole testattu ilman niitä,
 # fetch-kutsut toimivat ilmankin.
@@ -68,24 +85,18 @@ def liidit():
 @cross_origin(supports_credentials=True)
 # Huom. Header asettuu automaattisesti oikein: 
 # Access-Control-Allow-Origin: http://localhost:3000
-
 @login_required
 def logout():
-    sessio = request.cookies.get('session')
-    print(f"reactapi/logout,sessio:{sessio}")
+    # sessio = request.cookies.get('session')
+    # print(f"reactapi/logout,sessio:{sessio}")
     logout_user()
-    # Tämä pitää muuttaa
-    # flash('You have been logged out.')
-    # return redirect(url_for('main.index'))
     return "OK"
 
-@reactapi.route('/signin', methods=['GET', 'POST','OPTIONS'])
-@cross_origin(supports_credentials=True,origins=['http://localhost:3000'])
+@reactapi.route('/signin', methods=['GET','POST'])
+@cross_origin(supports_credentials=True)
 def signin():
-    # Ajax-versio 
     form = LoginForm()
     sys.stderr.write(f"\nviews.py,SIGNIN:{form.email.data}'\n")
-    # print('\nviews.py,SIGNUP\n')
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data.lower()).first()
         if user is not None and user.verify_password(form.password.data):
@@ -112,7 +123,6 @@ def signin():
 def signup():
     form = RegistrationForm()
     sys.stderr.write('\nviews.py,SIGNUP,email:'+form.email.data+'\n')
-    # print('\nviews.py,SIGNUP\n')
     if form.validate_on_submit():
         user = User(email=form.email.data.lower(),
                     username=form.username.data,
@@ -154,8 +164,6 @@ def testi():
 
 
 
-# Tarvitaanko tätä, kun preflight request?
-# @reactapi.route('/haeProfiili', methods=['GET', 'POST', 'OPTIONS'])
 @reactapi.route('/haeProfiili', methods=['GET', 'POST'])
 # Tarvitaanko tätä, unsafe cross domain request?
 # credentials:'include' => unsafe request => origin määritettävä muuksi kuin '*'
@@ -167,8 +175,8 @@ def testi():
 # Huom. Header Access-Control-Allow-Credentials: true ei välity,
 # jos ei ole kirjautunut eli session-evästettä ei saavu, ja syntyy
 # CORS-virhe. Näin myös, jos @login_manager.login_view on asettamatta, sillä tällöin 
-# suoritus päättyy 401-virheeseen. Tämä tilanne voidaan käsitellä
-# blueprintin 401-virhekäsittelijällä.  
+# suoritus päättyy 401-virheeseen. Tämä tilanne käsitellään tässä
+# Blueprintin 401-virhekäsittelijällä.  
 def haeProfiili():
     id = current_user.get_id()
     # taulun rivi objektiksi
