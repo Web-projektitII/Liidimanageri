@@ -99,7 +99,8 @@ def liidi():
         else:    
             liidi = Liidi()
             try:
-                form.populate_obj(liidi)               
+                form.populate_obj(liidi)     
+                # HUOM. tiedot suoraan lomakeobjektista tauluobjektiin          
                 db.session.add(liidi)
                 db.session.commit()
                 flash(f"Liidi {form.nimi.data} on lisätty.")  
@@ -127,6 +128,7 @@ def liidi():
         id = request.args.get('id')
         liidi = Liidi.query.get_or_404(id)
         form = LiidiForm(obj=liidi)
+        # HUOM. tiedot tauluobjektista suoraan lomakeobjektiin
         # form.submit.label.text = 'Muuta'
         form.user_id.choices = choices
     return render_template('auth/liidi.html',form=form)
@@ -136,7 +138,7 @@ def liidi():
 def liidit():
     page = request.args.get('page', 1, type=int)
     pagination = Liidi.query.order_by(Liidi.nimi).paginate(
-        page, per_page=current_app.config['LM_POSTS_PER_PAGE'],
+        page=page, per_page=current_app.config['LM_POSTS_PER_PAGE'],
         error_out=False)
     lista = pagination.items
     return render_template('auth/liidit.html',lista=lista,pagination=pagination,page=page)
