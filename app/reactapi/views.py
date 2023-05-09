@@ -9,7 +9,7 @@ from . import reactapi
 from .. import db
 from ..models import User, Liidi
 from ..email import send_email
-from ..auth.forms import LoginForm, RegistrationForm, LiidiForm
+from ..auth.forms import LoginForm, RegistrationForm, ProfileForm
 from flask_cors import cross_origin
 from flask_wtf.csrf import generate_csrf,CSRFError
 import sys
@@ -192,13 +192,24 @@ def haeProfiili():
 @reactapi.route('/tallennaProfiili', methods=['GET', 'POST'])
 @cross_origin(supports_credentials=True)
 def tallennaProfiili():
-    print("tallennaProfiili")
-    form = RegistrationForm()
+    form = ProfileForm()
     sys.stderr.write('\nviews.py,tallennaProfiili,email:'+form.email.data+'\n')
     if form.validate_on_submit():
-        user = User.query.filter_by(id=current_user.id).first()
-        form.populate_obj(user)
+        user = current_user
+        print('\n'\
+            "user.email:",user.email,'\n'\
+            "current_user.email:",current_user.email,'\n'\
+            "form.email.data.lower():",form.email.data.lower(),'\n')
+        '''
+        Huom. 
+        user-objektin muutokset näkyvät myös current_user-objektissa
+        db.session.add(user)-komentoa ei tarvita
+        vrt. 
+        form.populate_obj(user) tai form.populate_obj(current_user)
+        form = ProfileForm(obj=user)
+        '''
         if current_user.email != form.email.data.lower():
+            print("tallennaProfiili, uusi sähköpostiosoite")
             user.confirmed = False
             token = user.generate_confirmation_token()
             send_email(user.email, 'Confirm Your Account',
@@ -207,7 +218,12 @@ def tallennaProfiili():
         # user.username = form.username.data
         # db.session.commit()   
         # toimisi myös 
-        db.session.add(user)
+        # Huom. Tässä muuttuu myös current_user
+        form.populate_obj(user)
+        print('\n'\
+            "user.email:",user.email,'\n'\
+            "current_user.email:",current_user.email,'\n'\
+            "form.email.data.lower():",form.email.data.lower(),'\n')
         db.session.commit()   
         # flash('A confirmation email has been sent to you by email.')
         return "OK"
