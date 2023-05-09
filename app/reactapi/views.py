@@ -188,3 +188,32 @@ def haeProfiili():
     response = jsonify(user)
     response.status_code = 200
     return response
+
+@reactapi.route('/tallennaProfiili', methods=['GET', 'POST'])
+@cross_origin(supports_credentials=True)
+def tallennaProfiili():
+    print("tallennaProfiili")
+    form = RegistrationForm()
+    sys.stderr.write('\nviews.py,tallennaProfiili,email:'+form.email.data+'\n')
+    if form.validate_on_submit():
+        user = User.query.filter_by(id=current_user.id).first()
+        form.populate_obj(user)
+        if current_user.email != form.email.data.lower():
+            user.confirmed = False
+            token = user.generate_confirmation_token()
+            send_email(user.email, 'Confirm Your Account',
+                   'auth/email/confirm', user=user, token=token)
+        # Huom. 
+        # user.username = form.username.data
+        # db.session.commit()   
+        # toimisi myös 
+        db.session.add(user)
+        db.session.commit()   
+        # flash('A confirmation email has been sent to you by email.')
+        return "OK"
+    else:
+        # print("validointivirheet:"+str(form.errors))
+        # return "Virhe lomakkeessa:"+str(form.errors)
+        response = jsonify(form.errors)
+        response.status_code = 200
+        return response

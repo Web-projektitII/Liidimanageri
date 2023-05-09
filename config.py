@@ -53,8 +53,8 @@ class LiidimanageriConfig(Config):
     DB_PASSWORD = os.environ.get('LOCAL_DB_PASSWORD')
     DB_NAME = os.environ.get('LOCAL_DB_NAME')
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://' + DB_USERNAME + ':' + DB_PASSWORD + '@localhost:3306/' + DB_NAME
-    # SQLALCHEMY_ECHO = True
-    SQLALCHEMY_ECHO = "debug"
+    SQLALCHEMY_ECHO = True
+    # SQLALCHEMY_ECHO = "debug"
     LM_MAIL_SUBJECT_PREFIX = '[Liidimanageri local]'
     LM_MAIL_SENDER = 'Liidimanageri local admin <omniakurssi@gmail.com>'
     # WTF_CSRF_ENABLED = False
