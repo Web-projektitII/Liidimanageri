@@ -11,8 +11,10 @@ def send_async_email(app, msg):
             mail.send(msg)
         except Exception as ex:
             ex_name = ex.__class__.__name__
-            if ex_name == 'SMTPSenderRefused':
-                sys.stderr.write(ex_name)
+            sys.stderr.write(ex_name) 
+            # if ex_name == 'SMTPSenderRefused':
+            #    sys.stderr.write(ex_name)
+         
 
 def send_email(to, subject, template, **kwargs):
     app = current_app._get_current_object()
